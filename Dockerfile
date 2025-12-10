@@ -12,14 +12,15 @@ RUN apt-get update && \
 WORKDIR /app
 
 # deps primero para cache
-COPY email_service/requirements.txt /app/requirements.txt
+COPY timeauthority-pkg /timeauthority-pkg
+COPY mensagelo/email_service/requirements.txt /app/requirements.txt
 RUN pip install --no-compile -r /app/requirements.txt
 
 # usuario no-root
 RUN useradd -m -u 10002 appsvc
 
 # código
-COPY email_service /app/email_service
+COPY mensagelo/email_service /app/email_service
 
 USER appsvc
 

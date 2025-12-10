@@ -2,10 +2,11 @@ import os
 import sqlite3
 from threading import Lock
 from typing import Optional, Iterable
-from datetime import datetime
+from timeauthority import get_time_authority
 from . import config
 
 _db_lock = Lock()
+_AUTH = get_time_authority()
 
 def init_db():
     os.makedirs(config.DATABASE_DIR, exist_ok=True)
@@ -35,8 +36,7 @@ def log_message(subject: str, body: str, recipients: Iterable[str], success: boo
         with _get_conn() as conn:
             cur = conn.cursor()
             rows = [
-                (subject, body, datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                 message_type, r, 1 if success else 0)
+                (subject, body, _AUTH.utc_iso(), message_type, r, 1 if success else 0)
                 for r in recipients
             ]
             cur.executemany("""
